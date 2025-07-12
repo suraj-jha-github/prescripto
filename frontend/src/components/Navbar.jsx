@@ -41,7 +41,7 @@ const Navbar = () => {
       </ul>
 
       <div className='flex items-center gap-4 '>
-        <button onClick={() => window.open('/', '_blank')} className='bg-gray-600 text-white px-6 py-3 rounded-full font-light hidden md:block hover:bg-gray-700 transition-colors'>Admin Panel</button>
+        <button onClick={() => window.open('https://prescripto-admin-khrp.onrender.com', '_blank')} className='bg-gray-600 text-white px-6 py-3 rounded-full font-light hidden md:block hover:bg-gray-700 transition-colors'>Admin Panel</button>
         {
           token && userData
             ? <div className='flex items-center gap-2 cursor-pointer group relative'>
@@ -70,7 +70,7 @@ const Navbar = () => {
             <NavLink onClick={() => setShowMenu(false)} to='/doctors' ><p className='px-4 py-2 rounded full inline-block'>ALL DOCTORS</p></NavLink>
             <NavLink onClick={() => setShowMenu(false)} to='/about' ><p className='px-4 py-2 rounded full inline-block'>ABOUT</p></NavLink>
             <NavLink onClick={() => setShowMenu(false)} to='/contact' ><p className='px-4 py-2 rounded full inline-block'>CONTACT</p></NavLink>
-            <button onClick={() => { window.open('/https://prescripto-admin-khrp.onrender.com', '_blank'); setShowMenu(false) }} className='px-4 py-2 rounded-full bg-gray-600 text-white'>Admin Panel</button>
+            <button onClick={() => { window.open('https://prescripto-admin-khrp.onrender.com', '_blank'); setShowMenu(false) }} className='px-4 py-2 rounded-full bg-gray-600 text-white'>Admin Panel</button>
             {!token && <button onClick={() => { navigate('/login'); setShowMenu(false) }} className='px-4 py-2 rounded-full bg-primary text-white'>Create Account</button>}
             {token && userData && (
               <>
