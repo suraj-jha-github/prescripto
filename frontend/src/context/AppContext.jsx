@@ -21,7 +21,12 @@ const AppContextProvider = (props) => {
 
         try {
 
-            const { data } = await axios.get(backendUrl + '/api/doctor/list')
+            const { data } = await axios.get(backendUrl + '/api/doctor/list', {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                withCredentials: false
+            })
             if (data.success) {
                 setDoctors(data.doctors)
             } else {
@@ -29,8 +34,13 @@ const AppContextProvider = (props) => {
             }
 
         } catch (error) {
-            console.log(error)
-            toast.error(error.message)
+            console.log('Error fetching doctors:', error)
+            if (error.response) {
+                console.log('Response data:', error.response.data)
+                console.log('Response status:', error.response.status)
+                console.log('Response headers:', error.response.headers)
+            }
+            toast.error('Failed to load doctors. Please try again.')
         }
 
     }
