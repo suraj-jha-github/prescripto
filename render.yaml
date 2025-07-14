@@ -2,24 +2,22 @@ services:
   # Frontend
   - type: web
     name: prescripto-frontend
-    env: static
+    env: node
     buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
 
   # Admin Dashboard
   - type: web
     name: prescripto-admin
-    env: static
+    env: node
     buildCommand: cd admin && npm install && npm run build
-    staticPublishPath: admin/dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    startCommand: cd admin && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
 
   # Backend API
   - type: web
