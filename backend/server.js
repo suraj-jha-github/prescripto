@@ -23,7 +23,7 @@ try {
 // middlewares
 app.use(express.json())
 
-// CORS configuration - Allow specific origins
+// Enhanced CORS configuration - More permissive for debugging
 const allowedOrigins = [
   'https://prescripto-v9ae.onrender.com',
   'https://prescripto-admin-khrp.onrender.com',
@@ -33,37 +33,51 @@ const allowedOrigins = [
   'http://127.0.0.1:3000'
 ];
 
+// More permissive CORS for debugging
 app.use(cors({
   origin: function (origin, callback) {
+    console.log('CORS check for origin:', origin);
+    
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('No origin provided, allowing request');
+      return callback(null, true);
+    }
     
     if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log('Origin allowed:', origin);
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);
-      callback(new Error('Not allowed by CORS'));
+      console.log('Allowed origins:', allowedOrigins);
+      // Temporarily allow all origins for debugging
+      callback(null, true);
     }
   },
   credentials: false,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'token', 'aToken', 'dToken', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'token', 'aToken', 'dToken', 'X-Requested-With', 'Origin', 'Accept']
 }));
 
-// Add CORS headers manually as backup for preflight requests
+// Enhanced CORS headers as backup
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} - Origin: ${req.headers.origin}`);
   
   const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
+  
+  // Allow all origins temporarily for debugging
+  if (origin) {
     res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', '*');
   }
   
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, token, aToken, dToken');
+  res.header('Access-Control-Allow-Credentials', 'false');
   
   if (req.method === 'OPTIONS') {
-    console.log('Handling OPTIONS request');
+    console.log('Handling OPTIONS preflight request');
     res.status(200).end();
     return;
   }
@@ -109,4 +123,7 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.listen(port, () => console.log(`Server started on PORT:${port}`))
+app.listen(port, () => {
+  console.log(`Server started on PORT:${port}`)
+  console.log('CORS configured for origins:', allowedOrigins)
+})

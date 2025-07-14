@@ -3,28 +3,16 @@
 ## Problem
 Page reloads and direct URL access still showing "Not Found" error even after implementing multiple solutions.
 
-## Multiple Solutions Implemented
+## Issue Fixed: URL with `/?/` prefix
+The URLs were showing as `https://prescripto-v9ae.onrender.com/?/doctors` instead of `https://prescripto-v9ae.onrender.com/doctors`. This was caused by the 404.html redirect script.
 
-### 1. Static Hosting Solutions
-- ✅ `_redirects` files (frontend and admin)
-- ✅ `public/_redirects` files
-- ✅ `vercel.json` files
-- ✅ `static.json` files
-- ✅ `netlify.toml` files
-- ✅ `_headers` files
+### Fix Applied:
+- ✅ Removed `frontend/public/404.html` and `admin/public/404.html`
+- ✅ Removed routing scripts from `index.html` files
+- ✅ Removed conflicting static hosting config files
+- ✅ Kept only Express server solution
 
-### 2. Express Server Solution (Recommended)
-- ✅ Created Express servers for both frontend and admin
-- ✅ Updated package.json to include Express dependency
-- ✅ Updated render.yaml to use Node.js environment
-- ✅ Added proper routing handlers
-
-### 3. Client-Side Solutions
-- ✅ Added routing scripts to index.html
-- ✅ Created 404.html redirect files
-- ✅ Updated Vite configuration
-
-## Current Configuration
+## Current Solution: Express Server
 
 ### Frontend Server (`frontend/server.js`)
 ```javascript
@@ -42,12 +30,14 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Handle all routes by serving index.html
 app.get('*', (req, res) => {
+  console.log(`Serving index.html for route: ${req.path}`);
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Frontend server running on port ${port}`);
+  console.log(`Serving static files from: ${path.join(__dirname, 'dist')}`);
 });
 ```
 
@@ -67,14 +57,33 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Handle all routes by serving index.html
 app.get('*', (req, res) => {
+  console.log(`Serving index.html for route: ${req.path}`);
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.log(`Admin server running on port ${port}`);
+  console.log(`Serving static files from: ${path.join(__dirname, 'dist')}`);
 });
 ```
+
+## Files Removed (to fix URL issues):
+- ❌ `frontend/public/404.html`
+- ❌ `admin/public/404.html`
+- ❌ Routing scripts from `index.html` files
+- ❌ `frontend/static.json`
+- ❌ `admin/static.json`
+- ❌ `frontend/netlify.toml`
+- ❌ `admin/netlify.toml`
+
+## Files Kept:
+- ✅ `frontend/server.js` - Express server
+- ✅ `admin/server.js` - Express server
+- ✅ `frontend/package.json` - Updated with Express
+- ✅ `admin/package.json` - Updated with Express
+- ✅ `render.yaml` - Updated configuration
+- ✅ `_redirects` files (as backup)
 
 ## Deployment Steps
 
@@ -109,7 +118,7 @@ npm run build
 npm start
 ```
 
-### Test URLs
+### Expected URLs (no `/?/` prefix):
 - ✅ `http://localhost:3000/` - Home
 - ✅ `http://localhost:3000/doctors` - Doctors list
 - ✅ `http://localhost:3000/login` - Login
@@ -124,6 +133,7 @@ npm start
    - Look for build errors
    - Check if Express server is starting
    - Verify port configuration
+   - Look for the console.log messages
 
 2. **Verify File Structure**
    ```
@@ -137,11 +147,9 @@ npm start
    - Ensure Express is in dependencies
    - Verify start script is `node server.js`
 
-4. **Alternative: Use Hash Router**
-   If all else fails, we can switch to Hash Router:
-   ```javascript
-   import { HashRouter } from 'react-router-dom';
-   ```
+4. **Clear Browser Cache**
+   - Hard refresh (Ctrl+F5)
+   - Clear browser cache completely
 
 ## Expected Result
 
@@ -151,6 +159,8 @@ After deploying with Express servers:
 - ✅ Browser navigation works
 - ✅ Deep linking works
 - ✅ No more "Not Found" errors
+- ✅ No `/?/` prefix in URLs
+- ✅ Clean URLs like `/doctors`, `/admin-dashboard`
 
 ## Fallback Options
 
@@ -158,13 +168,4 @@ If Express servers don't work:
 
 1. **Switch to Hash Router**
 2. **Use a different hosting platform** (Vercel, Netlify)
-3. **Implement server-side rendering** (Next.js)
-
-## Files Modified
-
-- ✅ `frontend/server.js` - Express server
-- ✅ `admin/server.js` - Express server
-- ✅ `frontend/package.json` - Added Express
-- ✅ `admin/package.json` - Added Express
-- ✅ `render.yaml` - Updated configuration
-- ✅ Multiple static hosting config files 
+3. **Implement server-side rendering** (Next.js) 

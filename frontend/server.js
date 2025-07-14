@@ -12,10 +12,12 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Handle all routes by serving index.html
 app.get('*', (req, res) => {
+  console.log(`Serving index.html for route: ${req.path}`);
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Frontend server running on port ${port}`);
+  console.log(`Serving static files from: ${path.join(__dirname, 'dist')}`);
 }); 
