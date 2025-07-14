@@ -26,6 +26,7 @@ app.use(express.json())
 // CORS configuration - Allow specific origins
 const allowedOrigins = [
   'https://prescripto-v9ae.onrender.com',
+  'https://prescripto-admin-khrp.onrender.com',
   'http://localhost:5173',
   'http://localhost:3000',
   'http://127.0.0.1:5173',

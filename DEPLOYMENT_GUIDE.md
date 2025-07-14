@@ -18,6 +18,7 @@ from origin 'https://prescripto-v9ae.onrender.com' has been blocked by CORS poli
 
 2. **Allowed Origins**:
    - `https://prescripto-v9ae.onrender.com` (your frontend)
+   - `https://prescripto-admin-khrp.onrender.com` (your admin dashboard)
    - `http://localhost:5173` (local development)
    - `http://localhost:3000` (local development)
    - `http://127.0.0.1:5173` (local development)
@@ -34,6 +35,8 @@ from origin 'https://prescripto-v9ae.onrender.com' has been blocked by CORS poli
    CLOUDINARY_CLOUD_NAME=your_cloudinary_name
    CLOUDINARY_API_KEY=your_cloudinary_api_key
    CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+   ADMIN_EMAIL=your_admin_email
+   ADMIN_PASSWORD=your_admin_password
    ```
 
 2. **Build Command**: `npm install`
@@ -44,6 +47,12 @@ from origin 'https://prescripto-v9ae.onrender.com' has been blocked by CORS poli
 1. **Build Command**: `npm run build`
 2. **Publish Directory**: `dist`
 3. **Environment Variables**: None required for frontend
+
+### Admin Dashboard (Render.com)
+
+1. **Build Command**: `npm run build`
+2. **Publish Directory**: `dist`
+3. **Environment Variables**: None required for admin frontend
 
 ## Testing Steps
 
@@ -56,7 +65,7 @@ Expected response:
   "timestamp": "2024-01-01T00:00:00.000Z",
   "message": "Server is running",
   "cors": "Configured for production",
-  "allowedOrigins": ["https://prescripto-v9ae.onrender.com", ...]
+  "allowedOrigins": ["https://prescripto-v9ae.onrender.com", "https://prescripto-admin-khrp.onrender.com", ...]
 }
 ```
 
@@ -80,14 +89,25 @@ Expected response:
 }
 ```
 
+### 4. Test Admin Endpoints
+Visit: `https://prescripto-backend-wgqr.onrender.com/api/admin/dashboard`
+Expected response:
+```json
+{
+  "success": true,
+  "dashData": {...}
+}
+```
+
 ## Troubleshooting
 
 ### If CORS Error Persists
 
 1. **Check Browser Console** for specific error messages
 2. **Verify Frontend URL** - Ensure it matches exactly: `https://prescripto-v9ae.onrender.com`
-3. **Clear Browser Cache** - Hard refresh (Ctrl+F5)
-4. **Check Network Tab** - Look for preflight OPTIONS requests
+3. **Verify Admin URL** - Ensure it matches exactly: `https://prescripto-admin-khrp.onrender.com`
+4. **Clear Browser Cache** - Hard refresh (Ctrl+F5)
+5. **Check Network Tab** - Look for preflight OPTIONS requests
 
 ### If 502 Bad Gateway
 
@@ -101,6 +121,7 @@ Expected response:
 1. **Environment Variables Missing**:
    - Check Render dashboard → Environment tab
    - Ensure all variables are set correctly
+   - Make sure `ADMIN_EMAIL` and `ADMIN_PASSWORD` are set for admin login
 
 2. **Database Connection Issues**:
    - Verify MongoDB URI format
@@ -126,6 +147,13 @@ npm install
 npm run dev
 ```
 
+### Test Admin Locally
+```bash
+cd admin
+npm install
+npm run dev
+```
+
 ### Test API Calls
 ```bash
 # Test health endpoint
@@ -136,6 +164,9 @@ curl https://prescripto-backend-wgqr.onrender.com/test-cors
 
 # Test doctor list endpoint
 curl https://prescripto-backend-wgqr.onrender.com/api/doctor/list
+
+# Test admin dashboard endpoint
+curl https://prescripto-backend-wgqr.onrender.com/api/admin/dashboard
 ```
 
 ## Next Steps
@@ -143,7 +174,8 @@ curl https://prescripto-backend-wgqr.onrender.com/api/doctor/list
 1. **Deploy the updated backend** with the new CORS configuration
 2. **Test the health endpoint** to verify server is running
 3. **Test the frontend** to ensure API calls work
-4. **Monitor logs** in Render dashboard for any errors
+4. **Test the admin dashboard** to ensure admin functionality works
+5. **Monitor logs** in Render dashboard for any errors
 
 ## Support
 
@@ -151,4 +183,4 @@ If issues persist:
 1. Check Render deployment logs
 2. Verify all environment variables are set
 3. Test endpoints individually
-4. Check browser network tab for detailed error information 
+4. Check browser network tab for detailed error information
