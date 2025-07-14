@@ -24,6 +24,28 @@ from origin 'https://prescripto-v9ae.onrender.com' has been blocked by CORS poli
    - `http://127.0.0.1:5173` (local development)
    - `http://127.0.0.1:3000` (local development)
 
+## SPA Routing Fix
+
+### Problem
+When you reload any page or directly access URLs like `/doctors`, `/admin/dashboard`, etc., you get a "Not Found" error. This happens because the server doesn't know how to handle client-side routes.
+
+### Solution Applied
+
+1. **Created `_redirects` files** in both frontend and admin directories:
+   ```
+   /*    /index.html   200
+   ```
+   This tells the server to serve `index.html` for all routes and let React Router handle the routing.
+
+2. **Created `render.yaml`** for proper deployment configuration with routing rules.
+
+### Files Created:
+- `frontend/_redirects`
+- `frontend/public/_redirects`
+- `admin/_redirects`
+- `admin/public/_redirects`
+- `render.yaml`
+
 ## Deployment Checklist
 
 ### Backend (Render.com)
