@@ -11,6 +11,9 @@ import adminRouter from "./routes/adminRoute.js"
 const app = express()
 const port = process.env.PORT || 3001
 
+// Keep alive mechanism to prevent sleep
+let keepAliveInterval;
+
 // Connect to database and cloudinary
 try {
   connectDB()
@@ -106,6 +109,15 @@ app.get("/", (req, res) => {
   res.send("API Working")
 });
 
+// Keep alive endpoint to prevent sleep
+app.get("/ping", (req, res) => {
+  res.json({ 
+    message: "Server is alive", 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 // Debug endpoint to test CORS
 app.get("/test-cors", (req, res) => {
   console.log("CORS test endpoint hit");
@@ -119,11 +131,41 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString(),
     message: "Server is running",
     cors: "Configured for production",
-    allowedOrigins
+    allowedOrigins,
+    uptime: process.uptime()
   });
 });
 
-app.listen(port, () => {
+// Start server
+const server = app.listen(port, () => {
   console.log(`Server started on PORT:${port}`)
   console.log('CORS configured for origins:', allowedOrigins)
-})
+  
+  // Start keep alive mechanism
+  keepAliveInterval = setInterval(() => {
+    console.log('Keep alive ping - Server uptime:', process.uptime());
+  }, 300000); // Ping every 5 minutes
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  if (keepAliveInterval) {
+    clearInterval(keepAliveInterval);
+  }
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully');
+  if (keepAliveInterval) {
+    clearInterval(keepAliveInterval);
+  }
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
